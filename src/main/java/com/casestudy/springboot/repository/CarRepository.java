@@ -8,7 +8,9 @@ import com.casestudy.springboot.model.Car;
 
 public interface CarRepository extends JpaRepository<Car, Integer> {
 	
-	List<Car> findByStatus(String status); 
+	List<Car> findByStatus(String status);
+
+
 }
 
 

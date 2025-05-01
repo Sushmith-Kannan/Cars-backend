@@ -1,5 +1,6 @@
 package com.casestudy.springboot.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,21 @@ public class Car {
     private String vehicleRegistrationNumber;
     private String carColor;
     private String status;
+    
+    @Column(nullable = false)
+    private double price;
+
+    @Column(nullable = false)
+    private String brand;
+
+    @Column(nullable = false)
+    private String fuelType;
+
+    @Column(nullable = false)
+    private String transmission;
+
+    @Column(nullable = false)
+    private String mileage;
     
     @ManyToOne
     private User user;
@@ -76,6 +92,36 @@ public class Car {
 	}
 	public void setUser(User user) {
 		this.user = user;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public String getBrand() {
+		return brand;
+	}
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+	public String getFuelType() {
+		return fuelType;
+	}
+	public void setFuelType(String fuelType) {
+		this.fuelType = fuelType;
+	}
+	public String getTransmission() {
+		return transmission;
+	}
+	public void setTransmission(String transmission) {
+		this.transmission = transmission;
+	}
+	public String getMileage() {
+		return mileage;
+	}
+	public void setMileage(String mileage) {
+		this.mileage = mileage;
 	} 
 	
     

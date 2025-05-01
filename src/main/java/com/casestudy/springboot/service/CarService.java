@@ -1,7 +1,9 @@
 package com.casestudy.springboot.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,4 +42,15 @@ public class CarService {
 		// TODO Auto-generated method stub
 		return carRepository.findById(carId);
 	}
+
+
+	public Object getDistinctCarModels() {
+		// TODO Auto-generated method stub
+		   return carRepository.findAll().stream()
+	                .map(Car::getCarModel)
+	                .filter(Objects::nonNull)
+	                .distinct()
+	                .collect(Collectors.toList());
+	}
+	
 }

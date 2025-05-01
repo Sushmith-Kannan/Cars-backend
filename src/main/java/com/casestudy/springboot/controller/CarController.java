@@ -70,5 +70,10 @@ public class CarController {
 		return car;
       
     }
+    
 
+    @GetMapping("/models")
+    public ResponseEntity<Object> getCarModels() {
+        return ResponseEntity.ok(carService.getDistinctCarModels());
+    }
 }
