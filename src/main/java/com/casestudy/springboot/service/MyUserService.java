@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.casestudy.springboot.model.User;
 import com.casestudy.springboot.repository.AuthRepository;
 @Service
 public class MyUserService implements UserDetailsService{
@@ -16,7 +17,7 @@ public class MyUserService implements UserDetailsService{
 	private AuthRepository authRepository;
 	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+	public User loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		return authRepository.findByUsername(username);
 		

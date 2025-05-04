@@ -23,6 +23,13 @@ public interface RentalRepository extends JpaRepository<Rental, Integer> {
 	boolean existsByCarIdAndUserIdAndStartDateBeforeAndEndDateAfter(int carId, int userId, LocalDate endDate,
 			LocalDate startDate);
 
+
+	Page<Rental> findByUserIdAndStatus(int userId, String string, Pageable pageable);
+
+	Page<Rental> findByUserId(int userId, Pageable pageable);
+
+	List<Rental> findByUserId(int userId);
+
 	
 // Pagination support
 }

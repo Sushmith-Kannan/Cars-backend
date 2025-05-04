@@ -36,6 +36,10 @@ public class Car {
     @Column(nullable = false)
     private String mileage;
     
+//    @Column
+//    private String documentImageUrl; // or List<String> if multiple files
+
+    
     @ManyToOne
     private User user;
     
@@ -124,5 +128,13 @@ public class Car {
 		this.mileage = mileage;
 	} 
 	
-    
+//
+//    public String getDocumentImageUrl() {
+//        return documentImageUrl;
+//    }
+//
+//    public void setDocumentImageUrl(String documentImageUrl) {
+//        this.documentImageUrl = documentImageUrl;
+//    }
+
 }

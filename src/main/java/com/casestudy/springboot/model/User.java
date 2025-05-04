@@ -36,10 +36,29 @@ public class User implements UserDetails{
 	
 	private String role;
 	
-	@OneToMany
-	 private List<Rental> rentals;
- 
+//	@OneToMany
+//	 private List<Rental> rentals;
 	
+//	@OneToMany
+//	private List<Car> cars;
+// 
+////	
+//	public List<Rental> getRentals() {
+//		return rentals;
+//	}
+//
+//	public void setRentals(List<Rental> rentals) {
+//		this.rentals = rentals;
+//	}
+
+//	public List<Car> getCars() {
+//		return cars;
+//	}
+//
+//	public void setCars(List<Car> cars) {
+//		this.cars = cars;
+//	}
+
 	public User() { //JPA needs this
 		super();
 		// TODO Auto-generated constructor stub

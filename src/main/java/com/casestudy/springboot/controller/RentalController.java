@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,10 +43,11 @@ public class RentalController {
     }
 
     @GetMapping("/inprogress")
-    public RentalDto getInProgressRentals(@RequestParam int page, @RequestParam int size) {
+    public RentalDto getInProgressRentals(@RequestParam int page, @RequestParam int size, @RequestParam int userId) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Rental> rentalPage = rentalService.getPaginatedProgressRentals(pageable);
+        Page<Rental> rentalPage = rentalService.getPaginatedProgressRentalsByUserId(userId, pageable);
 
+        RentalDto rentalDto = new RentalDto();
         rentalDto.setList(rentalPage.getContent());
         rentalDto.setTotalPages(rentalPage.getTotalPages());
         rentalDto.setTotalElements((int) rentalPage.getTotalElements());
@@ -54,6 +56,7 @@ public class RentalController {
 
         return rentalDto;
     }
+
     @GetMapping("/allrentals")
     public RentalDto getAllRentals(@RequestParam int page, @RequestParam int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -70,6 +73,14 @@ public class RentalController {
     }
 
 
+    @GetMapping("user/{userId}")
+    public Page<Rental> getRentalsByUserId(
+            @PathVariable int userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return rentalService.getRentalsByUserId(userId, page, size);
+    }
+
     @PostMapping("/create")
     public Rental createRental(@RequestBody Rental rental) {
         return rentalService.createRental(
@@ -77,7 +88,7 @@ public class RentalController {
                 rental.getUser().getId(),
                 rental.getStartDate(),
                 rental.getEndDate(),
-                rental.getCost(),
+//                rental.getCost(),
                 rental.getStatus(),
                 rental.getRating()
         );

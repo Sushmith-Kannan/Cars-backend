@@ -1,6 +1,5 @@
 package com.casestudy.springboot.controller;
 
-
 import java.security.Principal;
 
 import org.slf4j.Logger;
@@ -31,64 +30,47 @@ public class AuthController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+
 	@Autowired
 	private AuthService authService;
+
 	@Autowired
 	private MyUserService myUserService;
+
 	@Autowired
 	private JwtUtil jwtUtil;
-	
-	//added the loggers for the authcontroller class
-	Logger logger =  LoggerFactory.getLogger("AuthController"); 
-	
+
+	Logger logger = LoggerFactory.getLogger("AuthController");
+
 	@PostMapping("/signup")
 	public User signUp(@RequestBody User user) throws InvalidUsernameException {
-		//logs for signup
-		logger.info("signup is in progress for user"+user.getUsername());
+		logger.info("signup is in progress for user " + user.getUsername());
 		return authService.signUp(user);
 	}
-	
-	
-	
-	
+
 	@GetMapping("/login")
 	public UserDetails login(Principal principal) {
-		/* Make this login as Authenticated API 
-		 * If this method is called, it means that Spring Filter alreeady
-		 * has correct username/password
-		 * 
-		 * Can i ask spring filter to share these username and password  with me?
-		 * -- yes but only username, spring filter never ever shares user password 
-		 * */
 		String username = principal.getName();
-		logger.debug("Username given " + username); 
+		logger.debug("Username given " + username);
 		return myUserService.loadUserByUsername(username);
 	}
-	
+
 	@PostMapping("/token/generate")
-	public TokenDto generateToken(@RequestBody User user,TokenDto dto) {
-		/*Step 1. Build authentication ref based on username,passord given*/
-		Authentication auth = 
-		new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
-	
+	public TokenDto generateToken(@RequestBody User user, TokenDto dto) {
+		Authentication auth = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 		authenticationManager.authenticate(auth);
-		
-		/*Step 2: Generate the token since we know that credentials are correct */
-		String token =  jwtUtil.generateToken(user.getUsername()); 
+		String token = jwtUtil.generateToken(user.getUsername());
 		dto.setToken(token);
 		dto.setUsername(user.getUsername());
 		dto.setExpiry(jwtUtil.extractExpiration(token).toString());
-		logger.info("Token generated for User " + user.getUsername()); 
+		logger.info("Token generated for User " + user.getUsername());
 		logger.warn("Token will expiry On " + jwtUtil.extractExpiration(token).toString());
-		return dto; 
+		return dto;
 	}
-	
+
 	@GetMapping("/user/details")
-	public UserDetails getUserDetails(Principal principal) {
+	public User getUserDetails(Principal principal) {
 		String username = principal.getName();
-		return myUserService.loadUserByUsername(username);
+		return myUserService.loadUserByUsername(username); // must return full User object with id and role
 	}
-	
-	
-	
 }

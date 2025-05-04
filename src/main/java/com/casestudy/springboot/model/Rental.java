@@ -17,6 +17,7 @@ public class Rental {
     @ManyToOne
     private Car car;
     
+    
     @ManyToOne
 	private User user;
 
@@ -28,7 +29,7 @@ public class Rental {
 	}
 	private LocalDate startDate;
     private LocalDate endDate;
-    private Double cost;
+//    private Double cost;
     private String status;
     private Double rating=0.0;
 	public int getId() {
@@ -55,12 +56,12 @@ public class Rental {
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
-	public Double getCost() {
-		return cost;
-	}
-	public void setCost(Double cost) {
-		this.cost = cost;
-	}
+//	public Double getCost() {
+//		return cost;
+//	}
+//	public void setCost(Double cost) {
+//		this.cost = cost;
+//	}
 	public String getStatus() {
 		return status;
 	}

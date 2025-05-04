@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.casestudy.springboot.model.Car;
+import com.casestudy.springboot.model.User;
+import com.casestudy.springboot.repository.AuthRepository;
 import com.casestudy.springboot.repository.CarRepository;
 
 @Service
@@ -17,6 +19,9 @@ public class CarService {
 
     @Autowired
     private CarRepository carRepository;
+    
+    @Autowired
+    private AuthRepository authrepo;
 
     public Car submitCarForApproval(Car car) {
         car.setStatus("submitted");
@@ -52,5 +57,18 @@ public class CarService {
 	                .distinct()
 	                .collect(Collectors.toList());
 	}
+
+	public List<Car> getCarsByUserId(int userId) {
+		User user = authrepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+	    // Find all cars associated with the user (adjust logic based on your entity relations)
+	    List<Car> cars = carRepository.findByUserId(userId);  // Assuming `findByUserId` method exists in the CarRepository
+	    if (cars.isEmpty()) {
+	        throw new RuntimeException("No cars found for this user");
+	    }
+
+	    return cars;	}
+
 	
+
 }

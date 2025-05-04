@@ -1,8 +1,11 @@
 package com.casestudy.springboot.service;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +52,7 @@ public class RentalService {
 	}
 	
 
-    public Rental createRental(int carId, int userId, LocalDate startDate, LocalDate endDate, double cost, String status, double rating) {
+    public Rental createRental(int carId, int userId, LocalDate startDate, LocalDate endDate,  String status, double rating) {
         Car car = carRepository.findById(carId).orElseThrow(() -> new RuntimeException("Car not found"));
         User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -58,12 +61,31 @@ public class RentalService {
         rental.setUser(user);
         rental.setStartDate(startDate);
         rental.setEndDate(endDate);
-        rental.setCost(cost);
+//        rental.setCost(cost);
         rental.setStatus(status);
         rental.setRating(rating);
 
         return rentalRepository.save(rental);
     }
+	public Page<Rental> getPaginatedProgressRentalsByUserId(int userId, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return rentalRepository.findByUserIdAndStatus(userId, "In Progress", pageable);
+	}
+	public Page<Rental> getRentalsByUserId(int userId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+        return rentalRepository.findByUserId(userId, pageable);
+	}
+	public List<Car> getCarsByUserId(int userId) {
+		// TODO Auto-generated method stub
+		List<Rental> rentals = rentalRepository.findByUserId(userId);
+
+        // Fetch the list of cars associated with those rentals
+        List<Car> cars = rentals.stream()
+            .map(Rental::getCar) // Assuming there's a getCar method in Rental to get the associated Car
+            .collect(Collectors.toList());
+
+        return cars;
+	}
 
 
 
