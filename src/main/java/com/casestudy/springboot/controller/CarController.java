@@ -3,6 +3,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +17,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.casestudy.springboot.dto.RentalDto;
 import com.casestudy.springboot.model.Car;
+import com.casestudy.springboot.model.Rental;
 import com.casestudy.springboot.model.User;
 import com.casestudy.springboot.service.CarService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,17 +37,12 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    // POST API to add a car for approval
     @PostMapping("/add")
     public ResponseEntity<Car> addCar(@RequestBody Car car) {
-        // Fetch the currently authenticated user from the security context
+    	
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();  // This assumes you have a UserDetails implementation
-
-        // Set the authenticated user to the car
+        User user = (User) authentication.getPrincipal();  
         car.setUser(user);
-
-        // Submit the car for approval (assuming this method handles the logic)
         Car submittedCar = carService.submitCarForApproval(car);
         return new ResponseEntity<>(submittedCar, HttpStatus.CREATED);
     }
@@ -49,21 +50,12 @@ public class CarController {
     // POST API to approve a car by the manager
     @PostMapping("/approve/{carId}")
     public ResponseEntity<Car> approveCar(@PathVariable int carId) {
-        // Approve the car with the given ID
         Car approvedCar = carService.approveCar(carId);
         return new ResponseEntity<>(approvedCar, HttpStatus.OK);
     }
 
-    // GET API to retrieve all approved cars
-    @GetMapping("/approved")
-    public ResponseEntity<List<Car>> getApprovedCars() {
-        // Fetch all approved cars
-        List<Car> approvedCars = carService.getApprovedCars();
-        return new ResponseEntity<>(approvedCars, HttpStatus.OK);
-    }
     @GetMapping("/all")
     public ResponseEntity<List<Car>> getAllCars() {
-        // Fetch all approved cars
         List<Car> allCars = carService.getAllCars();
         return new ResponseEntity<>(allCars, HttpStatus.OK);
     }
@@ -80,13 +72,24 @@ public class CarController {
         return cars;
     }
 
-    
-    
-
     @GetMapping("/models")
     public ResponseEntity<Object> getCarModels() {
         return ResponseEntity.ok(carService.getDistinctCarModels());
     }
+    
+    @GetMapping("/submitted")
+    public RentalDto getInPendingRentals(@RequestParam int page, @RequestParam int size, @RequestParam int userId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Car> rentalPage = carService.getPaginatedPendingRentalsByUserId(userId, pageable);
 
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setList1(rentalPage.getContent());
+        rentalDto.setTotalPages(rentalPage.getTotalPages());
+        rentalDto.setTotalElements((int) rentalPage.getTotalElements());
+        rentalDto.setSize(size);
+        rentalDto.setCurrentPage(page);
+
+        return rentalDto;
+    }
 
 }

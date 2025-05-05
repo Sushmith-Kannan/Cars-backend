@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +58,37 @@ public class RentalController {
 
         return rentalDto;
     }
+    
+    @GetMapping("/accepted")
+    public RentalDto getAcceptedRentals(@RequestParam int page, @RequestParam int size, @RequestParam int userId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Rental> rentalPage = rentalService.getPaginatedAcceptedRentalsByUserId(userId, pageable);
+
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setList(rentalPage.getContent());
+        rentalDto.setTotalPages(rentalPage.getTotalPages());
+        rentalDto.setTotalElements((int) rentalPage.getTotalElements());
+        rentalDto.setSize(size);
+        rentalDto.setCurrentPage(page);
+
+        return rentalDto;
+    }
+    
+    @GetMapping("/pending")
+    public RentalDto getInPendingRentals(@RequestParam int page, @RequestParam int size, @RequestParam int userId) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Rental> rentalPage = rentalService.getPaginatedPendingRentalsByUserId(userId, pageable);
+
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setList(rentalPage.getContent());
+        rentalDto.setTotalPages(rentalPage.getTotalPages());
+        rentalDto.setTotalElements((int) rentalPage.getTotalElements());
+        rentalDto.setSize(size);
+        rentalDto.setCurrentPage(page);
+
+        return rentalDto;
+    }
+
 
     @GetMapping("/allrentals")
     public RentalDto getAllRentals(@RequestParam int page, @RequestParam int size) {
@@ -87,10 +120,18 @@ public class RentalController {
         		rental.getCar().getId(),
                 rental.getUser().getId(),
                 rental.getStartDate(),
-                rental.getEndDate(),
 //                rental.getCost(),
+                rental.getEndDate(),
                 rental.getStatus(),
                 rental.getRating()
         );
     }
+
+    
+    @PostMapping("/approve/{rentalId}")
+    public ResponseEntity<Rental> approveRental(@PathVariable int rentalId) {
+        Rental approveRental = rentalService.approvedRental(rentalId);
+        return new ResponseEntity<>(approveRental, HttpStatus.OK);
+    }
+
 }

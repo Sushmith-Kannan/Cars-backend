@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.casestudy.springboot.model.Car;
 import com.casestudy.springboot.model.Rental;
 
 @Component
 public class RentalDto {
     private List<Rental> list;
+    private List<Car> list1;
     private int totalPages;
     private int totalElements;
     private int size;
@@ -53,4 +55,14 @@ public class RentalDto {
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
     }
+
+	public List<Car> getList1() {
+		return list1;
+	}
+
+	public void setList1(List<Car> list1) {
+		this.list1 = list1;
+	}
+
+    
 }

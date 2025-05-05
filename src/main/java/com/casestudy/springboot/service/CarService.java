@@ -6,9 +6,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.casestudy.springboot.model.Car;
+import com.casestudy.springboot.model.Rental;
 import com.casestudy.springboot.model.User;
 import com.casestudy.springboot.repository.AuthRepository;
 import com.casestudy.springboot.repository.CarRepository;
@@ -34,23 +37,17 @@ public class CarService {
         return carRepository.save(car);
     }
 
-    public List<Car> getApprovedCars() {
-        return carRepository.findByStatus("approved");
-    }
-
 	public List<Car> getAllCars() {
-		// TODO Auto-generated method stub
+
 		 return carRepository.findAll();
 	}
 
 	public Optional<Car> getCarById(int carId) {
-		// TODO Auto-generated method stub
 		return carRepository.findById(carId);
 	}
 
 
 	public Object getDistinctCarModels() {
-		// TODO Auto-generated method stub
 		   return carRepository.findAll().stream()
 	                .map(Car::getCarModel)
 	                .filter(Objects::nonNull)
@@ -60,15 +57,17 @@ public class CarService {
 
 	public List<Car> getCarsByUserId(int userId) {
 		User user = authrepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
-	    // Find all cars associated with the user (adjust logic based on your entity relations)
-	    List<Car> cars = carRepository.findByUserId(userId);  // Assuming `findByUserId` method exists in the CarRepository
+	    List<Car> cars = carRepository.findByUserId(userId);  
 	    if (cars.isEmpty()) {
 	        throw new RuntimeException("No cars found for this user");
 	    }
 
 	    return cars;	}
-
 	
+	public Page<Car> getPaginatedPendingRentalsByUserId(int userId, Pageable pageable) {
+	    return carRepository.findByStatusAndUserId("submitted", userId, pageable);
+	}
+
+
 
 }

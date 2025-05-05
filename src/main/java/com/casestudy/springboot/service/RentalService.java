@@ -29,7 +29,7 @@ public class RentalService {
 
 
     public Page<Rental> getPaginatedActiveRentals(Pageable pageable) {
-        return rentalRepository.findByStatus("Completed", pageable); // Or "Active" depending on your logic
+        return rentalRepository.findByStatus("Completed", pageable); 
     }
     public Page<Rental> getAllRentals(Pageable pageable) {
         return rentalRepository.findAll(pageable);
@@ -68,7 +68,6 @@ public class RentalService {
         return rentalRepository.save(rental);
     }
 	public Page<Rental> getPaginatedProgressRentalsByUserId(int userId, Pageable pageable) {
-		// TODO Auto-generated method stub
 		return rentalRepository.findByUserIdAndStatus(userId, "In Progress", pageable);
 	}
 	public Page<Rental> getRentalsByUserId(int userId, int page, int size) {
@@ -76,17 +75,29 @@ public class RentalService {
         return rentalRepository.findByUserId(userId, pageable);
 	}
 	public List<Car> getCarsByUserId(int userId) {
-		// TODO Auto-generated method stub
+	
 		List<Rental> rentals = rentalRepository.findByUserId(userId);
 
-        // Fetch the list of cars associated with those rentals
         List<Car> cars = rentals.stream()
-            .map(Rental::getCar) // Assuming there's a getCar method in Rental to get the associated Car
+            .map(Rental::getCar)
             .collect(Collectors.toList());
 
         return cars;
 	}
+	public Page<Rental> getPaginatedPendingRentalsByUserId(int userId, Pageable pageable) {
+		return rentalRepository.findByUserIdAndStatus(userId, "pending", pageable);
+	}
 
+	public Rental approvedRental(int rentalId) {
+		Rental rental = rentalRepository.findById(rentalId)
+	            .orElseThrow(() -> new RuntimeException("Rental not found with ID: " + rentalId));
 
+	        rental.setStatus("APPROVED"); 
+	        return rentalRepository.save(rental);
+	}
+	
+	public Page<Rental> getPaginatedAcceptedRentalsByUserId(int userId, Pageable pageable) {
+		return rentalRepository.findByUserIdAndStatus(userId, "APPROVED", pageable);
+	}
 
 }
